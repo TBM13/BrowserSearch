@@ -1,0 +1,13 @@
+{
+  "ID": "E5A9FC7A3F7F4320BE612DA95C57C32D",
+  "ActionKeyword": "b?",
+  "IsGlobal": true,
+  "Name": "Browser Search",
+  "Author": "TBM13",
+  "Version": "1.0.0",
+  "Language": "csharp",
+  "Website": "https://github.com/TBM13/BrowserSearch",
+  "ExecuteFileName": "Community.PowerToys.Run.Plugin.BrowserSearch.dll",
+  "IcoPathDark": "Images\\BrowserSearch.dark.png",
+  "IcoPathLight": "Images\\BrowserSearch.light.png"
+}
