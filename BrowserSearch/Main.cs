@@ -15,35 +15,13 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
         public string Description => "Search in your browser's history.";
 
         private PluginInitContext? _context;
-        private readonly List<IBrowser> _supportedBrowsers = new()
-        {
-            new Chrome()
-        };
         private IBrowser? _defaultBrowser;
+        private long _lastUpdateTickCount = -300L;
 
         public void Init(PluginInitContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
-
-            // Retrieve default browser info
-            BrowserInfo.UpdateIfTimePassed();
-
-            foreach (IBrowser b in _supportedBrowsers)
-            {
-                if (b.Name == BrowserInfo.Name)
-                {
-                    _defaultBrowser = b;
-                    break;
-                }
-            }
-
-            if (_defaultBrowser is null)
-            {
-                Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));
-                return;
-            }
-
-            _defaultBrowser.Init();
+            InitDefaultBrowser();
         }
 
         public void ReloadData()
@@ -53,7 +31,34 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 return;
             }
 
+            // When the plugin is disabled and then re-enabled,
+            // ReloadData() is called multiple times so this is needed
+            long tickCount = Environment.TickCount64;
+            if (tickCount - _lastUpdateTickCount >= 300)
+            {
+                _lastUpdateTickCount = tickCount;
+                InitDefaultBrowser();
+            }
+        }
+
+        private void InitDefaultBrowser()
+        {
+            // Retrieve default browser info
             BrowserInfo.UpdateIfTimePassed();
+
+            _defaultBrowser = null;
+            switch (BrowserInfo.Name)
+            {
+                case "Google Chrome":
+                    _defaultBrowser = new Chrome();
+                    break;
+                default:
+                    Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));
+                    return;
+            }
+
+            Log.Info($"Initializing browser '{BrowserInfo.Name}'", typeof(Main));
+            _defaultBrowser.Init();
         }
 
         public List<Result> Query(Query query)

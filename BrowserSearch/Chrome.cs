@@ -14,7 +14,6 @@ namespace BrowserSearch
         private SqliteConnection? _historyDbConnection, _predictorDbConnection;
 
         private readonly List<Result> _history = new();
-        public string Name { get; } = "Google Chrome";
         public Dictionary<string, string> Predictions { get; } = new();
 
         void IBrowser.Init()
