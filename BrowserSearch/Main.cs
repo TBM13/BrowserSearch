@@ -18,6 +18,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
         };
         private IBrowser? _defaultBrowser;
 
+        public static string PluginID => "E5A9FC7A3F7F4320BE612DA95C57C32D";
         public string Name => "Browser Search";
         public string Description => "Search in your browser's history.";
 
