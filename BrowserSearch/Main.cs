@@ -2,6 +2,7 @@ using BrowserSearch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
 using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
@@ -45,6 +46,8 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
         {
             // Retrieve default browser info
             BrowserInfo.UpdateIfTimePassed();
+            // It may take some time until BrowserInfo is updated
+            Thread.Sleep(50);
 
             _defaultBrowser = null;
             switch (BrowserInfo.Name)
