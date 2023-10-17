@@ -82,7 +82,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 return history;
             }    
 
-            List<Result> results = new();
+            List<Result> results = new(history.Count);
             // Get the Browser's prediction for this specific query, if it has one
             _defaultBrowser.Predictions.TryGetValue(query.Search, out string? prediction);
 
@@ -94,11 +94,15 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 if (score <= 0)
                 {
                     continue;
-                }    
+                }
 
                 r.Score = score;
                 results.Add(r);
             }
+
+            // Creating the UI of every search entry is slow, so only show top 15 results
+            results.Sort((x, y) => y.Score.CompareTo(x.Score));
+            results = results.Take(15).ToList();
 
             return results;
         }
