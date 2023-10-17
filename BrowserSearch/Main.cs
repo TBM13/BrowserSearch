@@ -3,21 +3,37 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Windows.Controls;
+using Microsoft.PowerToys.Settings.UI.Library;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
 using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
 
 namespace Community.Powertoys.Run.Plugin.BrowserSearch
 {
-    public class Main : IPlugin, IReloadable
+    public class Main : IPlugin, ISettingProvider, IReloadable
     {
         public static string PluginID => "E5A9FC7A3F7F4320BE612DA95C57C32D";
         public string Name => "Browser Search";
         public string Description => "Search in your browser's history.";
 
+        public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
+        {
+            new PluginAdditionalOption()
+            {
+                Key = MaxResults,
+                DisplayLabel = "Maximum number of results",
+                DisplayDescription = "Maximum number of results to show. Set to -1 to show all (may decrease performance)",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
+                NumberValue = 15
+            },
+        };
+
+        private const string MaxResults = nameof(MaxResults);
         private PluginInitContext? _context;
         private IBrowser? _defaultBrowser;
         private long _lastUpdateTickCount = -300L;
+        private int _maxResults;
 
         public void Init(PluginInitContext context)
         {
@@ -40,6 +56,16 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 _lastUpdateTickCount = tickCount;
                 InitDefaultBrowser();
             }
+        }
+
+        public Control CreateSettingPanel()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateSettings(PowerLauncherPluginSettings settings)
+        {
+            _maxResults = (int)(settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == MaxResults)?.NumberValue ?? 15);
         }
 
         private void InitDefaultBrowser()
@@ -100,9 +126,12 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 results.Add(r);
             }
 
-            // Creating the UI of every search entry is slow, so only show top 15 results
-            results.Sort((x, y) => y.Score.CompareTo(x.Score));
-            results = results.Take(15).ToList();
+            if (_maxResults != -1)
+            {
+                // Rendering the UI of every search entry is slow, so only show top results
+                results.Sort((x, y) => y.Score.CompareTo(x.Score));
+                results = results.Take(_maxResults).ToList();
+            }
 
             return results;
         }

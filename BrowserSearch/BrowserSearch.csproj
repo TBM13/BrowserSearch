@@ -20,6 +20,9 @@
     <Reference Include="Microsoft.Data.Sqlite.Core">
       <HintPath>libs\Microsoft.Data.Sqlite.dll</HintPath>
     </Reference>
+    <Reference Include="PowerToys.Settings.UI.Lib">
+      <HintPath>libs\PowerToys.Settings.UI.Lib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
