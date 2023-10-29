@@ -2,8 +2,13 @@
 This is a plugin for PowerToys Run.
 It reads your default browser's history, allowing you to search its entries and open their URL.
 
+<p align="center">
+    <img src="./Screenshots/1.png" width="500"/>
+</p>
+
 ## Supported browsers
-Only Chrome is supported right now.
+* Google Chrome
+* Microsoft Edge (Chromium version)
 
 ## Install instructions
 * Exit PowerToys
