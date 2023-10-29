@@ -9,12 +9,17 @@ using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
 
 namespace BrowserSearch
 {
-    internal class Chrome : IBrowser
+    internal class Chromium : IBrowser
     {
-        private SqliteConnection? _historyDbConnection, _predictorDbConnection;
-
-        private readonly List<Result> _history = new();
         public Dictionary<string, string> Predictions { get; } = new();
+        private readonly List<Result> _history = new();
+        private SqliteConnection? _historyDbConnection, _predictorDbConnection;
+        private readonly string _userDataPath;
+
+        public Chromium(string userDataPath)
+        {
+            _userDataPath = userDataPath;
+        }
 
         void IBrowser.Init()
         {
@@ -37,14 +42,19 @@ namespace BrowserSearch
 
         private void CopyDatabases()
         {
-            string historyCopy = Path.GetTempPath() + @"\BrowserSearch_Chrome_History";
-            string predictorCopy = Path.GetTempPath() + @"\BrowserSearch_Chrome_ActionPredictor";
+            string historyCopy = Path.GetTempPath() + @"\BrowserSearch_History";
+            string predictorCopy = Path.GetTempPath() + @"\BrowserSearch_ActionPredictor";
 
             // We need to copy the databases. If we don't, we won't be able to open them
-            // while Chrome is running
-            string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            File.Copy(localappdata + @"\Google\Chrome\User Data\Default\History", historyCopy, true);
-            File.Copy(localappdata + @"\Google\Chrome\User Data\Default\Network Action Predictor", predictorCopy, true);
+            // while the browser is running
+            File.Copy(
+                Path.Join(_userDataPath, @"Default\History"),
+                historyCopy, true
+            );
+            File.Copy(
+                Path.Join(_userDataPath, @"Default\Network Action Predictor"),
+                predictorCopy, true
+            );
 
             _historyDbConnection = new($"Data Source={historyCopy}");
             _predictorDbConnection = new($"Data Source={predictorCopy}");
@@ -110,7 +120,7 @@ namespace BrowserSearch
                         // Open URL in default browser
                         if (!Helper.OpenInShell(url))
                         {
-                            Log.Error($"Couldn't open '{url}'", typeof(Chrome));
+                            Log.Error($"Couldn't open '{url}'", typeof(Chromium));
                             return false;
                         }
 

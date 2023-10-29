@@ -1,6 +1,7 @@
 using BrowserSearch;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Controls;
@@ -76,10 +77,19 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             Thread.Sleep(50);
 
             _defaultBrowser = null;
+            string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+
             switch (BrowserInfo.Name)
             {
                 case "Google Chrome":
-                    _defaultBrowser = new Chrome();
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome\User Data")
+                    );
+                    break;
+                case "Microsoft Edge":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge\User Data")
+                    );
                     break;
                 default:
                     Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));
