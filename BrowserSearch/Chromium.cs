@@ -13,54 +13,96 @@ namespace BrowserSearch
     {
         public Dictionary<string, string> Predictions { get; } = new();
         private readonly List<Result> _history = new();
-        private SqliteConnection? _historyDbConnection, _predictorDbConnection;
-        private readonly string _userDataPath;
+        private readonly string _userDataDir;
 
-        public Chromium(string userDataPath)
+        public Chromium(string userDataDir)
         {
-            _userDataPath = userDataPath;
+            _userDataDir = userDataDir;
         }
 
         void IBrowser.Init()
         {
-            CopyDatabases();
+            foreach (string path in Directory.GetDirectories(_userDataDir))
+            {
+                if (path.EndsWith("System Profile") || path.EndsWith("Guest Profile"))
+                {
+                    continue;
+                }    
+
+                if (path.EndsWith("Default") || path.Contains("Profile"))
+                {
+                    ChromiumProfile profile = new(path);
+                    profile.Init(_history, Predictions);
+                }
+            }
+        }
+
+        List<Result> IBrowser.GetHistory()
+        {
+            return _history ?? new List<Result>();
+        }
+    }
+
+    internal class ChromiumProfile
+    {
+        private readonly string _path;
+        private SqliteConnection? _historyDbConnection, _predictorDbConnection;
+
+        public ChromiumProfile(string path)
+        {
+            _path = path;
+        }
+
+        public void Init(List<Result> history, Dictionary<string, string> predictions)
+        {
+            Log.Info($"Initializing Chromium profile: '{_path}'", typeof(Chromium));
+
+            try
+            {
+                CopyDatabases();
+            }
+            catch (FileNotFoundException)
+            {
+                Log.Warn($"Couldn't find database files in '{_path}'", typeof(Chromium));
+                return;
+            }
             if (_historyDbConnection is null || _predictorDbConnection is null)
             {
-                throw new ArgumentNullException(nameof(_historyDbConnection));
+                throw new NullReferenceException(nameof(_historyDbConnection));
             }
             if (_predictorDbConnection is null)
             {
-                throw new ArgumentNullException(nameof(_predictorDbConnection));
+                throw new NullReferenceException(nameof(_predictorDbConnection));
             }
 
-            PopulatePredictions();
-            PopulateHistory();
+            PopulatePredictions(predictions);
+            PopulateHistory(history);
 
             _historyDbConnection.Close();
             _predictorDbConnection.Close();
+            _historyDbConnection.Dispose();
+            _predictorDbConnection.Dispose();
         }
 
         private void CopyDatabases()
         {
-            string historyCopy = Path.GetTempPath() + @"\BrowserSearch_History";
-            string predictorCopy = Path.GetTempPath() + @"\BrowserSearch_ActionPredictor";
+            string _dirName = _path[(_path.LastIndexOf('\\') + 1)..];
+            string historyCopy = Path.GetTempPath() + @"\BrowserSearch_History_" + _dirName;
+            string predictorCopy = Path.GetTempPath() + @"\BrowserSearch_ActionPredictor_" + _dirName;
 
-            // We need to copy the databases. If we don't, we won't be able to open them
-            // while the browser is running
+            // We need to copy the databases, otherwise we can't open them while the browser is running
             File.Copy(
-                Path.Join(_userDataPath, @"Default\History"),
-                historyCopy, true
+                Path.Join(_path, @"\History"), historyCopy, true
             );
             File.Copy(
-                Path.Join(_userDataPath, @"Default\Network Action Predictor"),
-                predictorCopy, true
+                Path.Join(_path, @"\Network Action Predictor"), predictorCopy, true
             );
 
             _historyDbConnection = new($"Data Source={historyCopy}");
             _predictorDbConnection = new($"Data Source={predictorCopy}");
         }
 
-        private SqliteDataReader ExecuteCmd(SqliteConnection connection, SqliteCommand cmd)
+        private static SqliteDataReader ExecuteCmd(SqliteConnection connection, SqliteCommand cmd)
         {
             cmd.Connection = connection;
             connection.Open();
@@ -68,15 +110,14 @@ namespace BrowserSearch
             return cmd.ExecuteReader();
         }
 
-        private void PopulatePredictions()
+        public void PopulatePredictions(Dictionary<string, string> predictions)
         {
             if (_predictorDbConnection is null)
             {
-                throw new ArgumentNullException(nameof(_predictorDbConnection));
+                throw new NullReferenceException(nameof(_predictorDbConnection));
             }
 
             Dictionary<string, long> _predictionHits = new();
-
             using SqliteCommand cmd = new("SELECT user_text, url, number_of_hits FROM network_action_predictor");
             using SqliteDataReader reader = ExecuteCmd(_predictorDbConnection, cmd);
             while (reader.Read())
@@ -90,16 +131,16 @@ namespace BrowserSearch
                 if (_predictionHits.GetValueOrDefault(text, -1) < hits)
                 {
                     _predictionHits[text] = hits;
-                    Predictions[text] = url;
+                    predictions[text] = url;
                 }
             }
         }
 
-        private void PopulateHistory()
+        public void PopulateHistory(List<Result> history)
         {
             if (_historyDbConnection is null)
             {
-                throw new ArgumentNullException(nameof(_historyDbConnection));
+                throw new NullReferenceException(nameof(_historyDbConnection));
             }
 
             using SqliteCommand historyReadCmd = new("SELECT url, title FROM urls ORDER BY visit_count DESC");
@@ -128,13 +169,8 @@ namespace BrowserSearch
                     },
                 };
 
-                _history.Add(result);
+                history.Add(result);
             }
-        }
-
-        List<Result> IBrowser.GetHistory()
-        {
-            return _history ?? new List<Result>();
         }
     }
 }
