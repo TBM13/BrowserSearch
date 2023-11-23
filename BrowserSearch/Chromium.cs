@@ -55,7 +55,7 @@ namespace BrowserSearch
 
         public void Init(List<Result> history, Dictionary<string, string> predictions)
         {
-            Log.Info($"Initializing Chromium profile: '{_path}'", typeof(Chromium));
+            Log.Info($"Initializing Chromium profile: '{_path}'", typeof(ChromiumProfile));
 
             try
             {
@@ -63,17 +63,11 @@ namespace BrowserSearch
             }
             catch (FileNotFoundException)
             {
-                Log.Warn($"Couldn't find database files in '{_path}'", typeof(Chromium));
+                Log.Warn($"Couldn't find database files in '{_path}'", typeof(ChromiumProfile));
                 return;
             }
-            if (_historyDbConnection is null || _predictorDbConnection is null)
-            {
-                throw new NullReferenceException(nameof(_historyDbConnection));
-            }
-            if (_predictorDbConnection is null)
-            {
-                throw new NullReferenceException(nameof(_predictorDbConnection));
-            }
+            ArgumentNullException.ThrowIfNull(_historyDbConnection);
+            ArgumentNullException.ThrowIfNull(_predictorDbConnection);
 
             PopulatePredictions(predictions);
             PopulateHistory(history);
@@ -112,10 +106,7 @@ namespace BrowserSearch
 
         public void PopulatePredictions(Dictionary<string, string> predictions)
         {
-            if (_predictorDbConnection is null)
-            {
-                throw new NullReferenceException(nameof(_predictorDbConnection));
-            }
+            ArgumentNullException.ThrowIfNull(_predictorDbConnection);
 
             Dictionary<string, long> _predictionHits = new();
             using SqliteCommand cmd = new("SELECT user_text, url, number_of_hits FROM network_action_predictor");
@@ -138,10 +129,7 @@ namespace BrowserSearch
 
         public void PopulateHistory(List<Result> history)
         {
-            if (_historyDbConnection is null)
-            {
-                throw new NullReferenceException(nameof(_historyDbConnection));
-            }
+            ArgumentNullException.ThrowIfNull(_historyDbConnection);
 
             using SqliteCommand historyReadCmd = new("SELECT url, title FROM urls ORDER BY visit_count DESC");
             using SqliteDataReader reader = ExecuteCmd(_historyDbConnection, historyReadCmd);
@@ -161,7 +149,7 @@ namespace BrowserSearch
                         // Open URL in default browser
                         if (!Helper.OpenInShell(url))
                         {
-                            Log.Error($"Couldn't open '{url}'", typeof(Chromium));
+                            Log.Error($"Couldn't open '{url}'", typeof(ChromiumProfile));
                             return false;
                         }
 

@@ -102,10 +102,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
 
         public List<Result> Query(Query query)
         {
-            if (query is null)
-            {
-                throw new ArgumentNullException(nameof(query));
-            }
+            ArgumentNullException.ThrowIfNull(query);
             if (_defaultBrowser is null)
             {
                 return new List<Result>();
