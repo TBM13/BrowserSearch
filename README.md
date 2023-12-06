@@ -26,5 +26,5 @@ It reads your default browser's history, allowing you to search its entries and 
     * Microsoft.Data.Sqlite.dll
     * PowerToys.Settings.UI.Lib.dll
 * Open the project in Visual Studio and build it in release mode
-* Copy the output folder `net7.0-windows` to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins\`
+* Copy the output folder `net8.0-windows` to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins\`
 * (Optional) Rename the copied folder to BrowserSearch

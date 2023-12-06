@@ -105,7 +105,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             ArgumentNullException.ThrowIfNull(query);
             if (_defaultBrowser is null)
             {
-                return new List<Result>();
+                return [];
             }
 
             List<Result> history = _defaultBrowser.GetHistory();
@@ -143,7 +143,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             return results;
         }
 
-        private int CalculateScore(string query, string title, string url, string? predictionUrl)
+        private static int CalculateScore(string query, string title, string url, string? predictionUrl)
         {
             // Since PT Run's FuzzySearch is too slow, and the history usually has a lot of entries,
             // lets calculate the scores manually.

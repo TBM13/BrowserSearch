@@ -39,7 +39,7 @@ namespace BrowserSearch
 
         List<Result> IBrowser.GetHistory()
         {
-            return _history ?? new List<Result>();
+            return _history ?? [];
         }
     }
 
