@@ -20,7 +20,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
 
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
         {
-            new PluginAdditionalOption()
+            new()
             {
                 Key = MaxResults,
                 DisplayLabel = "Maximum number of results",
@@ -28,13 +28,23 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Numberbox,
                 NumberValue = 15
             },
+            new()
+            {
+                Key = SingleProfile,
+                DisplayLabel = "Browser profile",
+                DisplayDescription = "The name of the browser profile whose history will be loaded.\n" +
+                                     "If empty, the history of ALL profiles will be loaded.",
+                PluginOptionType = PluginAdditionalOption.AdditionalOptionType.Textbox
+            }
         };
 
         private const string MaxResults = nameof(MaxResults);
+        private const string SingleProfile = nameof(SingleProfile);
         private PluginInitContext? _context;
         private IBrowser? _defaultBrowser;
         private long _lastUpdateTickCount = -300L;
         private int _maxResults;
+        private string? _selectedProfileName;
 
         public void Init(PluginInitContext context)
         {
@@ -67,6 +77,16 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
         public void UpdateSettings(PowerLauncherPluginSettings settings)
         {
             _maxResults = (int)(settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == MaxResults)?.NumberValue ?? 15);
+
+            PluginAdditionalOption? profile = settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == SingleProfile);
+            if (profile is not null && profile.TextValue.Length > 0)
+            {
+                _selectedProfileName = profile.TextValue;
+            }
+            else
+            {
+                _selectedProfileName = null;
+            }
         }
 
         private void InitDefaultBrowser()
@@ -83,12 +103,12 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             {
                 case "Google Chrome":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome\User Data")
+                        Path.Join(localappdata, @"Google\Chrome\User Data"), _selectedProfileName
                     );
                     break;
                 case "Microsoft Edge":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge\User Data")
+                        Path.Join(localappdata, @"Microsoft\Edge\User Data"), _selectedProfileName
                     );
                     break;
                 default:

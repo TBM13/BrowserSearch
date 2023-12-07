@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
+using System.Windows;
 using Wox.Infrastructure;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
@@ -11,41 +13,85 @@ namespace BrowserSearch
 {
     internal class Chromium : IBrowser
     {
-        public Dictionary<string, string> Predictions { get; } = new();
-        private readonly List<Result> _history = new();
-        private readonly string _userDataDir;
+        public Dictionary<string, string> Predictions { get; } = [];
 
-        public Chromium(string userDataDir)
+        private readonly List<Result> _history = [];
+        private readonly string _userDataDir;
+        private readonly Dictionary<string, ChromiumProfile> _profiles = [];
+        private readonly string? _selectedProfileName;
+
+        public Chromium(string userDataDir, string? profileName)
         {
             _userDataDir = userDataDir;
+            _selectedProfileName = profileName;
         }
 
         void IBrowser.Init()
         {
-            foreach (string path in Directory.GetDirectories(_userDataDir))
-            {
-                if (path.EndsWith("System Profile") || path.EndsWith("Guest Profile"))
-                {
-                    continue;
-                }    
+            CreateProfiles();
 
-                if (path.EndsWith("Default") || path.Contains("Profile"))
+            // Load history from all profiles
+            if (_selectedProfileName is null)
+            {
+                foreach (ChromiumProfile profile in _profiles.Values)
                 {
-                    ChromiumProfile profile = new(path);
                     profile.Init(_history, Predictions);
+                }
+
+                return;
+            }
+
+            // Load history from selected profile
+            if (!_profiles.TryGetValue(_selectedProfileName.ToLower(), out ChromiumProfile? selectedProfile))
+            {
+                Log.Error($"Couldn't find profile '{_selectedProfileName}'", typeof(Chromium));
+                MessageBox.Show($"No profile with the name '{_selectedProfileName}' was found.", "BrowserSearch");
+
+                return;
+            }
+            selectedProfile.Init(_history, Predictions);
+        }
+
+        private void CreateProfiles()
+        {
+            using StreamReader jsonFileReader = new(
+                new FileStream(Path.Join(_userDataDir, "Local State"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+            );
+
+            JsonDocument localState = JsonDocument.Parse(jsonFileReader.ReadToEnd());
+            jsonFileReader.Close();
+
+            string[] nameProperties = ["gaia_given_name", "gaia_name", "name", "shortcut_name"];
+            JsonElement infoCache = localState.RootElement.GetProperty("profile").GetProperty("info_cache");
+            foreach (JsonProperty profileInfo in infoCache.EnumerateObject())
+            {
+                ChromiumProfile profile = new(Path.Join(_userDataDir, profileInfo.Name));
+                _profiles[profileInfo.Name.ToLower()] = profile;
+
+                foreach (string nameProp in nameProperties)
+                {
+                    if (profileInfo.Value.TryGetProperty(nameProp, out JsonElement nameElem))
+                    {
+                        string? name = nameElem.GetString()?.ToLower();
+                        if (!string.IsNullOrEmpty(name))
+                        {
+                            _profiles[name] = profile;
+                        }
+                    }
                 }
             }
         }
 
         List<Result> IBrowser.GetHistory()
         {
-            return _history ?? [];
+            return _history;
         }
     }
 
     internal class ChromiumProfile
     {
         private readonly string _path;
+        private bool _initialized;
         private SqliteConnection? _historyDbConnection, _predictorDbConnection;
 
         public ChromiumProfile(string path)
@@ -55,6 +101,10 @@ namespace BrowserSearch
 
         public void Init(List<Result> history, Dictionary<string, string> predictions)
         {
+            if (_initialized)
+            {
+                return;
+            }
             Log.Info($"Initializing Chromium profile: '{_path}'", typeof(ChromiumProfile));
 
             try
@@ -76,6 +126,7 @@ namespace BrowserSearch
             _predictorDbConnection.Close();
             _historyDbConnection.Dispose();
             _predictorDbConnection.Dispose();
+            _initialized = true;
         }
 
         private void CopyDatabases()
