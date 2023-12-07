@@ -136,14 +136,11 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             }    
 
             List<Result> results = new(history.Count);
-            // Get the Browser's prediction for this specific query, if it has one
-            _defaultBrowser.Predictions.TryGetValue(query.Search, out string? prediction);
-
             for (int i = 0; i < history.Count; i++)
             {
                 Result r = history[i];
 
-                int score = CalculateScore(query.Search, r.Title, r.SubTitle, prediction);
+                int score = CalculateScore(query.Search, r.Title, r.SubTitle);
                 if (score <= 0)
                 {
                     continue;
@@ -163,10 +160,10 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             return results;
         }
 
-        private static int CalculateScore(string query, string title, string url, string? predictionUrl)
+        private int CalculateScore(string query, string title, string url)
         {
             // Since PT Run's FuzzySearch is too slow, and the history usually has a lot of entries,
-            // lets calculate the scores manually.
+            // lets calculate the scores manually using a faster (but less accurate) method
             float titleScore = title.Contains(query, StringComparison.InvariantCultureIgnoreCase)
                 ? ((float)query.Length / (float)title.Length * 100f)
                 : 0;
@@ -175,13 +172,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 : 0;
 
             float score = new[] { titleScore, urlScore }.Max();
-            // If the browser has a prediction for this specific query,
-            // we want to give a higher score to the entry that has
-            // the prediction's url
-            if (predictionUrl is not null && predictionUrl == url)
-            {
-                score += 50;
-            }
+            score += _defaultBrowser!.CalculateExtraScore(query, title, url);
 
             return (int)score;
         }

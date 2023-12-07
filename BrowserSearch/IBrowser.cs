@@ -5,8 +5,8 @@ namespace BrowserSearch
 {
     internal interface IBrowser
     {
-        Dictionary<string, string> Predictions { get; }
         void Init();
         List<Result> GetHistory();
+        int CalculateExtraScore(string query, string title, string url);
     }
 }

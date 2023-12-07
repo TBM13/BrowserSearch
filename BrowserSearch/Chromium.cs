@@ -13,12 +13,12 @@ namespace BrowserSearch
 {
     internal class Chromium : IBrowser
     {
-        public Dictionary<string, string> Predictions { get; } = [];
-
-        private readonly List<Result> _history = [];
         private readonly string _userDataDir;
         private readonly Dictionary<string, ChromiumProfile> _profiles = [];
         private readonly string? _selectedProfileName;
+        private readonly List<Result> _history = [];
+        // Key is query, Value is a list of predictions for that query
+        private readonly Dictionary<string, List<ChromiumPrediction>> _predictions = [];
 
         public Chromium(string userDataDir, string? profileName)
         {
@@ -35,7 +35,7 @@ namespace BrowserSearch
             {
                 foreach (ChromiumProfile profile in _profiles.Values)
                 {
-                    profile.Init(_history, Predictions);
+                    profile.Init(_history, _predictions);
                 }
 
                 return;
@@ -49,7 +49,7 @@ namespace BrowserSearch
 
                 return;
             }
-            selectedProfile.Init(_history, Predictions);
+            selectedProfile.Init(_history, _predictions);
         }
 
         private void CreateProfiles()
@@ -86,6 +86,30 @@ namespace BrowserSearch
         {
             return _history;
         }
+
+        public int CalculateExtraScore(string query, string title, string url)
+        {
+            if (!_predictions.TryGetValue(query, out List<ChromiumPrediction>? predictions))
+            {
+                return 0;
+            }
+
+            foreach (ChromiumPrediction prediction in predictions)
+            {
+                if (prediction.url == url)
+                {
+                    return (int)prediction.hits;
+                }
+            }
+
+            return 0;
+        }
+    }
+
+    internal class ChromiumPrediction(string url, long hits)
+    {
+        public readonly string url = url;
+        public readonly long hits = hits;
     }
 
     internal class ChromiumProfile
@@ -99,7 +123,7 @@ namespace BrowserSearch
             _path = path;
         }
 
-        public void Init(List<Result> history, Dictionary<string, string> predictions)
+        public void Init(List<Result> history, Dictionary<string, List<ChromiumPrediction>> predictions)
         {
             if (_initialized)
             {
@@ -155,26 +179,25 @@ namespace BrowserSearch
             return cmd.ExecuteReader();
         }
 
-        public void PopulatePredictions(Dictionary<string, string> predictions)
+        public void PopulatePredictions(Dictionary<string, List<ChromiumPrediction>> predictions)
         {
             ArgumentNullException.ThrowIfNull(_predictorDbConnection);
 
-            Dictionary<string, long> _predictionHits = new();
             using SqliteCommand cmd = new("SELECT user_text, url, number_of_hits FROM network_action_predictor");
             using SqliteDataReader reader = ExecuteCmd(_predictorDbConnection, cmd);
             while (reader.Read())
             {
-                string text = (string)reader[0]; // Query
+                string query = (string)reader[0];
                 string url = (string)reader[1]; // Predicted URL for that query
                 long hits = (long)reader[2]; // Amount of times the prediction was correct and the user selected it
 
-                // There can be multiples predictions for the same query
-                // So lets make sure to only select the one with the most hits
-                if (_predictionHits.GetValueOrDefault(text, -1) < hits)
+                if (!predictions.TryGetValue(query, out List<ChromiumPrediction>? value))
                 {
-                    _predictionHits[text] = hits;
-                    predictions[text] = url;
+                    value = [];
+                    predictions[query] = value;
                 }
+
+                value.Add(new ChromiumPrediction(url, hits));
             }
         }
 
