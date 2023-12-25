@@ -79,7 +79,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             _maxResults = (int)(settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == MaxResults)?.NumberValue ?? 15);
 
             PluginAdditionalOption? profile = settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == SingleProfile);
-            if (profile is not null && profile.TextValue.Length > 0)
+            if (profile is not null && profile.TextValue?.Length > 0)
             {
                 _selectedProfileName = profile.TextValue;
             }
