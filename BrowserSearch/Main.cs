@@ -17,7 +17,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
     {
         public static string PluginID => "E5A9FC7A3F7F4320BE612DA95C57C32D";
         public string Name => "Browser Search";
-        public string Description => "Search in your browser's history.";
+        public string Description => "Searches in your browser's history.";
 
         public IEnumerable<PluginAdditionalOption> AdditionalOptions => new List<PluginAdditionalOption>()
         {
