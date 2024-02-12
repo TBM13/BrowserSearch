@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 using System.Windows.Controls;
 using Microsoft.PowerToys.Settings.UI.Library;
 using Wox.Plugin;
@@ -118,6 +119,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                     break;
                 default:
                     Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));
+                    MessageBox.Show($"Browser '{BrowserInfo.Name}' is not supported", "BrowserSearch");
                     return;
             }
 
