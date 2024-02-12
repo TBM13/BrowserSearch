@@ -103,7 +103,16 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             {
                 case "Brave":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser\User Data"), _selectedProfileName
+                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser\User Data"), _selectedProfileName);
+                    break;
+                case "Brave Beta":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Beta\User Data"), _selectedProfileName
+                    );
+                    break;
+                case "Brave Nightly":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Nightly\User Data"), _selectedProfileName
                     );
                     break;
                 case "Google Chrome":
@@ -111,9 +120,39 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                         Path.Join(localappdata, @"Google\Chrome\User Data"), _selectedProfileName
                     );
                     break;
+                case "Google Chrome Beta":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome Beta\User Data"), _selectedProfileName
+                    );
+                    break;
+                case "Google Chrome Dev":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome Dev\User Data"), _selectedProfileName
+                    );
+                    break;
+                case "Google Chrome Canary":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome SxS\User Data"), _selectedProfileName
+                    );
+                    break;
                 case "Microsoft Edge":
                     _defaultBrowser = new Chromium(
                         Path.Join(localappdata, @"Microsoft\Edge\User Data"), _selectedProfileName
+                    );
+                    break;
+                case "Microsoft Edge Beta":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge Beta\User Data"), _selectedProfileName
+                    );
+                    break;
+                case "Microsoft Edge Dev":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge Dev\User Data"), _selectedProfileName
+                    );
+                    break;
+                case "Microsoft Edge Canary":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge SxS\User Data"), _selectedProfileName
                     );
                     break;
                 default:
