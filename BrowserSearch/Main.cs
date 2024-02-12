@@ -62,11 +62,10 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
 
             // When the plugin is disabled and then re-enabled,
             // ReloadData() is called multiple times so this is needed
-            long tickCount = Environment.TickCount64;
-            if (tickCount - _lastUpdateTickCount >= 300)
+            if (Environment.TickCount64 - _lastUpdateTickCount >= 300)
             {
-                _lastUpdateTickCount = tickCount;
                 InitDefaultBrowser();
+                _lastUpdateTickCount = Environment.TickCount64;
             }
         }
 
