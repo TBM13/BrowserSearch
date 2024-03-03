@@ -160,6 +160,11 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                         Path.Join(localappdata, @"Vivaldi\User Data"), _selectedProfileName
                     );
                     break;
+                case "Wavebox":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"WaveboxApp\User Data"), _selectedProfileName
+                    );
+                    break;
                 default:
                     Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));
                     MessageBox.Show($"Browser '{BrowserInfo.Name}' is not supported", "BrowserSearch");
