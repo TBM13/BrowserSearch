@@ -10,6 +10,9 @@ It reads your default browser's history, allowing you to search its entries and 
 * Brave
 * Google Chrome
 * Microsoft Edge (Chromium version)
+* Thorium
+* Vivaldi Browser
+* Wavebox
 
 Support for any other Chromium-based browser can be added easily. If yours is not listed here, open an issue.
 
