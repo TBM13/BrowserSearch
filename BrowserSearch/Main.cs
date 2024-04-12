@@ -189,11 +189,13 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             }
 
             List<Result> history = _defaultBrowser.GetHistory();
-            // This happens when the user only typed this plugin's ActionKeyword ("b?")
+            // Happens when the user only types our ActionKeyword ("b?" by default)
             if (string.IsNullOrEmpty(query.Search))
             {
-                return history;
-            }    
+                // Returning the whole history here makes the search lag, so only some entries
+                int amount = _maxResults == -1 ? 15 : _maxResults;
+                return history.TakeLast(amount).ToList();
+            }
 
             List<Result> results = new(history.Count);
             for (int i = 0; i < history.Count; i++)
