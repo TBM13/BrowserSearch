@@ -192,7 +192,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             // Happens when the user only types our ActionKeyword ("b?" by default)
             if (string.IsNullOrEmpty(query.Search))
             {
-                // Returning the whole history here makes the search lag, so only some entries
+                // Returning the whole history here makes the search lag, so return only some entries
                 int amount = _maxResults == -1 ? 15 : _maxResults;
                 return history.TakeLast(amount).ToList();
             }
