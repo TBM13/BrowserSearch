@@ -93,8 +93,20 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
         {
             // Retrieve default browser info
             BrowserInfo.UpdateIfTimePassed();
-            // It may take some time until BrowserInfo is updated
-            Thread.Sleep(50);
+
+            // It takes some time until BrowserInfo is updated, wait up to 500 ms
+            int msSlept = 0;
+            while (BrowserInfo.Name is null && msSlept < 500)
+            {
+                Thread.Sleep(50);
+                msSlept += 50;
+            }
+
+            if (BrowserInfo.Name is null)
+            {
+                Log.Error("Couldn't retrieve default browser name: Timeout", typeof(Main));
+                return;
+            }
 
             _defaultBrowser = null;
             string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
