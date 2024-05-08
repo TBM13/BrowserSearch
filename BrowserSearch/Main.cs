@@ -113,6 +113,10 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
 
             switch (BrowserInfo.Name)
             {
+                case "Arc":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Packages\TheBrowserCompany.Arc_ttt1ap7aakyb4\LocalCache\Local\Arc\User Data"), _selectedProfileName);
+                    break;
                 case "Brave":
                     _defaultBrowser = new Chromium(
                         Path.Join(localappdata, @"BraveSoftware\Brave-Browser\User Data"), _selectedProfileName);
