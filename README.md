@@ -7,6 +7,7 @@ It reads your default browser's history, allowing you to search its entries and 
 </p>
 
 ## Supported browsers
+* Arc
 * Brave
 * Google Chrome
 * Microsoft Edge (Chromium version)
