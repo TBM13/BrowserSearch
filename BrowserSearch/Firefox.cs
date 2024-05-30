@@ -210,7 +210,8 @@ namespace BrowserSearch
 
                 history.Add(result);
             }
-            history.Reverse();
+            history.Reverse(); // Reversing puts the highest frecency values to the end
+            // This way, the highest frecency values will be the first to be displayed in the search results when the user input is vague
 
             Log.Info($"Added {history.Count} history entries", typeof(FirefoxProfile));
         }
