@@ -167,7 +167,7 @@ namespace BrowserSearch
             ArgumentNullException.ThrowIfNull(_historyDbConnection);
 
             // Read the history entries from the database
-            using SqliteCommand historyReadCmd = new("SELECT url, title, frecency FROM moz_places GROUP BY url ORDER BY frecency DESC LIMIT 1000");
+            using SqliteCommand historyReadCmd = new("SELECT url, title, frecency FROM moz_places GROUP BY url ORDER BY frecency DESC"); // Limiting here is possible
             using SqliteDataReader reader = ExecuteCmd(_historyDbConnection, historyReadCmd);
 
             // Iterate over the sql results
