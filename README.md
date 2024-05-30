@@ -10,6 +10,7 @@ It reads your default browser's history, allowing you to search its entries and 
 * Arc
 * Brave
 * Google Chrome
+* Firefox
 * Microsoft Edge (Chromium version)
 * Thorium
 * Vivaldi Browser
