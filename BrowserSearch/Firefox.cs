@@ -92,7 +92,6 @@ namespace BrowserSearch
             if (url.Contains(query, StringComparison.InvariantCultureIgnoreCase) || title.Contains(query, StringComparison.InvariantCultureIgnoreCase))
             {
                 long frecency = _frecencyValues.GetValueOrDefault((url, title), 0);
-                Log.Info($"Frecency for '{title}, {url}': {frecency}", typeof(Firefox));
                 return (int)frecency / 1000;
             }
             else
@@ -212,8 +211,6 @@ namespace BrowserSearch
             }
             history.Reverse(); // Reversing puts the highest frecency values to the end
             // This way, the highest frecency values will be the first to be displayed in the search results when the user input is vague
-
-            Log.Info($"Added {history.Count} history entries", typeof(FirefoxProfile));
         }
     }
 }
