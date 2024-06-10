@@ -76,20 +76,17 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
 
         public void UpdateSettings(PowerLauncherPluginSettings settings)
         {
-            var GetSetting = (string key) =>
+            _maxResults = (int)(settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == MaxResults)?.NumberValue ?? 15);
+
+            PluginAdditionalOption? profile = settings?.AdditionalOptions?.FirstOrDefault(x => x.Key == SingleProfile);
+            if (profile is not null && profile.TextValue?.Length > 0)
             {
-                var target = settings.AdditionalOptions.FirstOrDefault((set) =>
-                {
-                    return set.Key == key;
-                });
-                return target!;
-            };
-
-            PluginAdditionalOption maxResults = GetSetting(MaxResults);
-            PluginAdditionalOption singleProfile = GetSetting(SingleProfile);
-
-            _maxResults = (int)maxResults.NumberValue;
-            _selectedProfileName = singleProfile.TextValue;
+                _selectedProfileName = profile.TextValue;
+            }
+            else
+            {
+                _selectedProfileName = null;
+            }
         }
 
         private void InitDefaultBrowser()
