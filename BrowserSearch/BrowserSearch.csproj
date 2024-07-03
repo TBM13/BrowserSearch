@@ -18,7 +18,7 @@
     <Reference Include="Wox.Infrastructure">
       <HintPath>libs\Wox.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Sqlite.Core">
+    <Reference Include="Microsoft.Data.Sqlite">
       <HintPath>libs\Microsoft.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="PowerToys.Settings.UI.Lib">
