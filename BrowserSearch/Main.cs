@@ -110,6 +110,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
 
             _defaultBrowser = null;
             string localappdata = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            string roamingappdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
             switch (BrowserInfo.Name)
             {
@@ -184,6 +185,11 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 case "Wavebox":
                     _defaultBrowser = new Chromium(
                         Path.Join(localappdata, @"WaveboxApp\User Data"), _selectedProfileName
+                    );
+                    break;
+                case "Firefox":
+                    _defaultBrowser = new Firefox(
+                        Path.Join(roamingappdata, @"Mozilla\Firefox"), _selectedProfileName
                     );
                     break;
                 default:
