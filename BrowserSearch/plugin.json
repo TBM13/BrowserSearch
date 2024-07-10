@@ -4,7 +4,7 @@
   "IsGlobal": true,
   "Name": "Browser Search",
   "Author": "TBM13",
-  "Version": "1.6.0",
+  "Version": "1.7.0",
   "Language": "csharp",
   "Website": "https://github.com/TBM13/BrowserSearch",
   "ExecuteFileName": "Community.PowerToys.Run.Plugin.BrowserSearch.dll",
