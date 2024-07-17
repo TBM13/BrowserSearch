@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>Community.PowerToys.Run.Plugin.$(MSBuildProjectName)</AssemblyName>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU;x64;ARM64</Platforms>
     <Version>1.7.0</Version>
   </PropertyGroup>
 
