@@ -14,11 +14,10 @@ namespace BrowserSearch
     internal class Chromium : IBrowser
     {
         private readonly string _userDataDir;
-        private readonly Dictionary<string, ChromiumProfile> _profiles = [];
+        private readonly Dictionary<string, ChromiumProfile> _profiles = new();
         private readonly string? _selectedProfileName;
-        private readonly List<Result> _history = [];
-        // Key is query, Value is a list of predictions for that query
-        private readonly Dictionary<string, List<ChromiumPrediction>> _predictions = [];
+        private readonly List<Result> _history = new();
+        private readonly Dictionary<string, List<ChromiumPrediction>> _predictions = new();
 
         public Chromium(string userDataDir, string? profileName)
         {
@@ -54,14 +53,13 @@ namespace BrowserSearch
 
         private void CreateProfiles()
         {
-            using StreamReader jsonFileReader = new(
-                new FileStream(Path.Join(_userDataDir, "Local State"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
-            );
+            // Determine the appropriate path for the Local State file
+            string localStatePath = GetLocalStatePath(_userDataDir);
 
+            using StreamReader jsonFileReader = new(new FileStream(localStatePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite));
             JsonDocument localState = JsonDocument.Parse(jsonFileReader.ReadToEnd());
-            jsonFileReader.Close();
 
-            string[] nameProperties = ["gaia_given_name", "gaia_name", "name", "shortcut_name"];
+            string[] nameProperties = { "gaia_given_name", "gaia_name", "name", "shortcut_name" };
             JsonElement infoCache = localState.RootElement.GetProperty("profile").GetProperty("info_cache");
             foreach (JsonProperty profileInfo in infoCache.EnumerateObject())
             {
@@ -80,6 +78,27 @@ namespace BrowserSearch
                     }
                 }
             }
+        }
+
+        private string GetLocalStatePath(string userDataDir)
+        {
+            // Check if Opera GX is used, otherwise use the default path
+            // Adjust the condition to identify Opera GX or other browsers
+            if (IsOperaGX(userDataDir))
+            {
+                return Path.Join(userDataDir, @"Opera GX Stable\Local State");
+            }
+            else
+            {
+                return Path.Join(userDataDir, "Local State");
+            }
+        }
+
+        private bool IsOperaGX(string userDataDir)
+        {
+            // Implement a method to identify if the browser is Opera GX
+            // For example, check for specific files or directory names
+            return Directory.Exists(Path.Join(userDataDir, "Opera GX Stable"));
         }
 
         List<Result> IBrowser.GetHistory()
@@ -106,10 +125,16 @@ namespace BrowserSearch
         }
     }
 
-    internal class ChromiumPrediction(string url, long hits)
+    internal class ChromiumPrediction
     {
-        public readonly string url = url;
-        public readonly long hits = hits;
+        public readonly string url;
+        public readonly long hits;
+
+        public ChromiumPrediction(string url, long hits)
+        {
+            this.url = url;
+            this.hits = hits;
+        }
     }
 
     internal class ChromiumProfile
@@ -155,16 +180,16 @@ namespace BrowserSearch
 
         private void CopyDatabases()
         {
-            string _dirName = _path[(_path.LastIndexOf('\\') + 1)..];
+            string _dirName = _path.Substring(_path.LastIndexOf('\\') + 1);
             string historyCopy = Path.GetTempPath() + @"\BrowserSearch_History_" + _dirName;
             string predictorCopy = Path.GetTempPath() + @"\BrowserSearch_ActionPredictor_" + _dirName;
 
             // We need to copy the databases, otherwise we can't open them while the browser is running
             File.Copy(
-                Path.Join(_path, @"\History"), historyCopy, true
+                Path.Join(_path, "History"), historyCopy, true
             );
             File.Copy(
-                Path.Join(_path, @"\Network Action Predictor"), predictorCopy, true
+                Path.Join(_path, "Network Action Predictor"), predictorCopy, true
             );
 
             _historyDbConnection = new($"Data Source={historyCopy}");
@@ -193,7 +218,7 @@ namespace BrowserSearch
 
                 if (!predictions.TryGetValue(query, out List<ChromiumPrediction>? value))
                 {
-                    value = [];
+                    value = new List<ChromiumPrediction>();
                     predictions[query] = value;
                 }
 

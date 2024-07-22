@@ -192,6 +192,11 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                         Path.Join(roamingappdata, @"Mozilla\Firefox"), _selectedProfileName
                     );
                     break;
+                case "Opera GX":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(roamingappdata, @"Opera Software"), _selectedProfileName
+                    );
+                    break;
                 default:
                     Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));
                     MessageBox.Show($"Browser '{BrowserInfo.Name}' is not supported", "BrowserSearch");
