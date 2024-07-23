@@ -13,8 +13,8 @@ namespace BrowserSearch.Browsers
 {
     internal class Chromium : IBrowser
     {
-        private readonly string _userDataDir;
-        private readonly Dictionary<string, ChromiumProfile> _profiles = [];
+        protected string UserDataDir { get; }
+        protected Dictionary<string, ChromiumProfile> Profiles { get; } = [];
         private readonly string? _selectedProfileName;
         private readonly List<Result> _history = [];
         // Key is query, Value is a list of predictions for that query
@@ -22,7 +22,7 @@ namespace BrowserSearch.Browsers
 
         public Chromium(string userDataDir, string? profileName)
         {
-            _userDataDir = userDataDir;
+            UserDataDir = userDataDir;
             _selectedProfileName = profileName;
         }
 
@@ -33,7 +33,7 @@ namespace BrowserSearch.Browsers
             // Load history from all profiles
             if (_selectedProfileName is null)
             {
-                foreach (ChromiumProfile profile in _profiles.Values)
+                foreach (ChromiumProfile profile in Profiles.Values)
                 {
                     profile.Init(_history, _predictions);
                 }
@@ -42,7 +42,7 @@ namespace BrowserSearch.Browsers
             }
 
             // Load history from selected profile
-            if (!_profiles.TryGetValue(_selectedProfileName.ToLower(), out ChromiumProfile? selectedProfile))
+            if (!Profiles.TryGetValue(_selectedProfileName.ToLower(), out ChromiumProfile? selectedProfile))
             {
                 Log.Error($"Couldn't find profile '{_selectedProfileName}'", typeof(Chromium));
                 MessageBox.Show($"No profile with the name '{_selectedProfileName}' was found.", "BrowserSearch");
@@ -52,10 +52,10 @@ namespace BrowserSearch.Browsers
             selectedProfile.Init(_history, _predictions);
         }
 
-        private void CreateProfiles()
+        protected virtual void CreateProfiles()
         {
             using StreamReader jsonFileReader = new(
-                new FileStream(Path.Join(_userDataDir, "Local State"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+                new FileStream(Path.Join(UserDataDir, "Local State"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
             );
 
             JsonDocument localState = JsonDocument.Parse(jsonFileReader.ReadToEnd());
@@ -65,8 +65,8 @@ namespace BrowserSearch.Browsers
             JsonElement infoCache = localState.RootElement.GetProperty("profile").GetProperty("info_cache");
             foreach (JsonProperty profileInfo in infoCache.EnumerateObject())
             {
-                ChromiumProfile profile = new(Path.Join(_userDataDir, profileInfo.Name));
-                _profiles[profileInfo.Name.ToLower()] = profile;
+                ChromiumProfile profile = new(Path.Join(UserDataDir, profileInfo.Name));
+                Profiles[profileInfo.Name.ToLower()] = profile;
 
                 foreach (string nameProp in nameProperties)
                 {
@@ -75,7 +75,7 @@ namespace BrowserSearch.Browsers
                         string? name = nameElem.GetString()?.ToLower();
                         if (!string.IsNullOrEmpty(name))
                         {
-                            _profiles[name] = profile;
+                            Profiles[name] = profile;
                         }
                     }
                 }

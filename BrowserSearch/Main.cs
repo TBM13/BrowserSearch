@@ -172,6 +172,11 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                         Path.Join(localappdata, @"Microsoft\Edge SxS\User Data"), _selectedProfileName
                     );
                     break;
+                case "Opera GX":
+                    _defaultBrowser = new OperaGX(
+                        Path.Join(roamingappdata, @"Opera Software\Opera GX Stable"), _selectedProfileName
+                    );
+                    break;
                 case "Thorium":
                     _defaultBrowser = new Chromium(
                         Path.Join(localappdata, @"Thorium\User Data"), _selectedProfileName
