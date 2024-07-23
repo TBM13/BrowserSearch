@@ -9,7 +9,7 @@ using Wox.Plugin;
 using Wox.Plugin.Logger;
 using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
 
-namespace BrowserSearch
+namespace BrowserSearch.Browsers
 {
     internal class Chromium : IBrowser
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Wox.Plugin;
 
-namespace BrowserSearch
+namespace BrowserSearch.Browsers
 {
     internal interface IBrowser
     {

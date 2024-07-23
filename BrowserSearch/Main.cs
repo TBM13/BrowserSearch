@@ -1,4 +1,3 @@
-using BrowserSearch;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +9,7 @@ using Microsoft.PowerToys.Settings.UI.Library;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
 using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
+using BrowserSearch.Browsers;
 
 namespace Community.Powertoys.Run.Plugin.BrowserSearch
 {
