@@ -187,6 +187,11 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                         Path.Join(localappdata, @"Vivaldi\User Data"), _selectedProfileName
                     );
                     break;
+                case "Waterfox":
+                    _defaultBrowser = new Firefox(
+                        Path.Join(roamingappdata, @"Waterfox"), _selectedProfileName
+                    );
+                    break;
                 case "Wavebox":
                     _defaultBrowser = new Chromium(
                         Path.Join(localappdata, @"WaveboxApp\User Data"), _selectedProfileName
