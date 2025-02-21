@@ -1,3 +1,5 @@
+using BrowserSearch.Browsers;
+using Microsoft.PowerToys.Settings.UI.Library;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -5,11 +7,9 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.PowerToys.Settings.UI.Library;
 using Wox.Plugin;
 using Wox.Plugin.Logger;
 using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
-using BrowserSearch.Browsers;
 
 namespace Community.Powertoys.Run.Plugin.BrowserSearch
 {
@@ -124,83 +124,71 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                     break;
                 case "Brave Beta":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Beta\User Data"), _selectedProfileName
-                    );
+                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Beta\User Data"), _selectedProfileName);
                     break;
                 case "Brave Nightly":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Nightly\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Google Chrome":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Google Chrome Beta":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome Beta\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Google Chrome Dev":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome Dev\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Google Chrome Canary":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome SxS\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Microsoft Edge":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Microsoft Edge Beta":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge Beta\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Microsoft Edge Dev":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge Dev\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Microsoft Edge Canary":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge SxS\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Opera GX":
-                    _defaultBrowser = new OperaGX(
-                        Path.Join(roamingappdata, @"Opera Software\Opera GX Stable"), _selectedProfileName
-                    );
-                    break;
-                case "Thorium":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Thorium\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Vivaldi":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Vivaldi\User Data"), _selectedProfileName
-                    );
-                    break;
-                case "Waterfox":
-                    _defaultBrowser = new Firefox(
-                        Path.Join(roamingappdata, @"Waterfox"), _selectedProfileName
-                    );
-                    break;
-                case "Wavebox":
-                    _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"WaveboxApp\User Data"), _selectedProfileName
-                    );
+                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Nightly\User Data"), _selectedProfileName);
                     break;
                 case "Firefox":
                     _defaultBrowser = new Firefox(
-                        Path.Join(roamingappdata, @"Mozilla\Firefox"), _selectedProfileName
-                    );
+                        Path.Join(roamingappdata, @"Mozilla\Firefox"), _selectedProfileName);
+                    break;
+                case "Google Chrome":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome\User Data"), _selectedProfileName);
+                    break;
+                case "Google Chrome Beta":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome Beta\User Data"), _selectedProfileName);
+                    break;
+                case "Google Chrome Dev":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome Dev\User Data"), _selectedProfileName);
+                    break;
+                case "Google Chrome Canary":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Google\Chrome SxS\User Data"), _selectedProfileName);
+                    break;
+                case "Microsoft Edge":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge\User Data"), _selectedProfileName);
+                    break;
+                case "Microsoft Edge Beta":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge Beta\User Data"), _selectedProfileName);
+                    break;
+                case "Microsoft Edge Dev":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge Dev\User Data"), _selectedProfileName);
+                    break;
+                case "Microsoft Edge Canary":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Microsoft\Edge SxS\User Data"), _selectedProfileName);
+                    break;
+                case "NAVER Whale":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Naver\Naver Whale\User Data"), _selectedProfileName);
+                    break;
+                case "Opera GX":
+                    _defaultBrowser = new OperaGX(
+                        Path.Join(roamingappdata, @"Opera Software\Opera GX Stable"), _selectedProfileName);
+                    break;
+                case "Thorium":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Thorium\User Data"), _selectedProfileName);
+                    break;
+                case "Vivaldi":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"Vivaldi\User Data"), _selectedProfileName);
+                    break;
+                case "Waterfox":
+                    _defaultBrowser = new Firefox(
+                        Path.Join(roamingappdata, @"Waterfox"), _selectedProfileName);
+                    break;
+                case "Wavebox":
+                    _defaultBrowser = new Chromium(
+                        Path.Join(localappdata, @"WaveboxApp\User Data"), _selectedProfileName);
                     break;
                 default:
                     Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));
@@ -259,10 +247,10 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             // Since PT Run's FuzzySearch is too slow, and the history usually has a lot of entries,
             // lets calculate the scores manually using a faster (but less accurate) method
             float titleScore = title.Contains(query, StringComparison.InvariantCultureIgnoreCase)
-                ? ((float)query.Length / (float)title.Length * 100f)
+                ? (query.Length / (float)title.Length * 100f)
                 : 0;
             float urlScore = url.Contains(query, StringComparison.InvariantCultureIgnoreCase)
-                ? ((float)query.Length / (float)url.Length * 100f)
+                ? (query.Length / (float)url.Length * 100f)
                 : 0;
 
             float score = new[] { titleScore, urlScore }.Max();
