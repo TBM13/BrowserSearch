@@ -116,19 +116,19 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             {
                 case "Arc":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Packages\TheBrowserCompany.Arc_ttt1ap7aakyb4\LocalCache\Local\Arc\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Packages\TheBrowserCompany.Arc_ttt1ap7aakyb4\LocalCache\Local\Arc\User Data")], _selectedProfileName);
                     break;
                 case "Brave":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"BraveSoftware\Brave-Browser\User Data")], _selectedProfileName);
                     break;
                 case "Brave Beta":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Beta\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Beta\User Data")], _selectedProfileName);
                     break;
                 case "Brave Nightly":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Nightly\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Nightly\User Data")], _selectedProfileName);
                     break;
                 case "Firefox":
                     _defaultBrowser = new Firefox([
@@ -138,39 +138,45 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                     break;
                 case "Google Chrome":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Google\Chrome\User Data")], _selectedProfileName);
                     break;
                 case "Google Chrome Beta":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome Beta\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Google\Chrome Beta\User Data")], _selectedProfileName);
                     break;
                 case "Google Chrome Dev":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome Dev\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Google\Chrome Dev\User Data")], _selectedProfileName);
                     break;
                 case "Google Chrome Canary":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Google\Chrome SxS\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Google\Chrome SxS\User Data")], _selectedProfileName);
                     break;
                 case "Microsoft Edge":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Microsoft\Edge\User Data")], _selectedProfileName);
                     break;
                 case "Microsoft Edge Beta":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge Beta\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Microsoft\Edge Beta\User Data")], _selectedProfileName);
                     break;
                 case "Microsoft Edge Dev":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge Dev\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Microsoft\Edge Dev\User Data")], _selectedProfileName);
                     break;
                 case "Microsoft Edge Canary":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Microsoft\Edge SxS\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Microsoft\Edge SxS\User Data")], _selectedProfileName);
                     break;
                 case "NAVER Whale":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Naver\Naver Whale\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Naver\Naver Whale\User Data")], _selectedProfileName);
+                    break;
+                case "Opera":
+                    _defaultBrowser = new Chromium([
+                            Path.Join(roamingappdata, @"Opera Software\Opera Stable"),      // Opera
+                            Path.Join(roamingappdata, @"Opera Software\Opera Developer")    // Opera Developer
+                        ], _selectedProfileName);
                     break;
                 case "Opera GX":
                     _defaultBrowser = new OperaGX(
@@ -178,11 +184,11 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                     break;
                 case "Thorium":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Thorium\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Thorium\User Data")], _selectedProfileName);
                     break;
                 case "Vivaldi":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"Vivaldi\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"Vivaldi\User Data")], _selectedProfileName);
                     break;
                 case "Waterfox":
                     _defaultBrowser = new Firefox([
@@ -191,7 +197,7 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                     break;
                 case "Wavebox":
                     _defaultBrowser = new Chromium(
-                        Path.Join(localappdata, @"WaveboxApp\User Data"), _selectedProfileName);
+                        [Path.Join(localappdata, @"WaveboxApp\User Data")], _selectedProfileName);
                     break;
                 default:
                     Log.Error($"Unsupported/unrecognized default browser '{BrowserInfo.Name}'", typeof(Main));

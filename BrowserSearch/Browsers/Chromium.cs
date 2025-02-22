@@ -13,16 +13,16 @@ namespace BrowserSearch.Browsers
 {
     internal class Chromium : IBrowser
     {
-        protected string UserDataDir { get; }
+        protected string[] UserDataDirCandidates { get; }
         protected Dictionary<string, ChromiumProfile> Profiles { get; } = [];
         private readonly string? _selectedProfileName;
         private readonly List<Result> _history = [];
         // Key is query, Value is a list of predictions for that query
         private readonly Dictionary<string, List<ChromiumPrediction>> _predictions = [];
 
-        public Chromium(string userDataDir, string? profileName)
+        public Chromium(string[] userDataDirCandidates, string? profileName)
         {
-            UserDataDir = userDataDir;
+            UserDataDirCandidates = userDataDirCandidates;
             _selectedProfileName = profileName;
         }
 
@@ -54,8 +54,22 @@ namespace BrowserSearch.Browsers
 
         protected virtual void CreateProfiles()
         {
+            string? userDataDir = null;
+            foreach (string candidate in UserDataDirCandidates)
+            {
+                if (Directory.Exists(candidate))
+                {
+                    userDataDir = candidate;
+                    break;
+                }
+            }
+
+            if (userDataDir is null)
+                throw new NullReferenceException("Couldn\'t find UserData directory");
+
+            Log.Info($"Found UserData directory: {userDataDir}", typeof(Chromium));
             using StreamReader jsonFileReader = new(
-                new FileStream(Path.Join(UserDataDir, "Local State"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
+                new FileStream(Path.Join(userDataDir, "Local State"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
             );
 
             JsonDocument localState = JsonDocument.Parse(jsonFileReader.ReadToEnd());
@@ -65,7 +79,7 @@ namespace BrowserSearch.Browsers
             JsonElement infoCache = localState.RootElement.GetProperty("profile").GetProperty("info_cache");
             foreach (JsonProperty profileInfo in infoCache.EnumerateObject())
             {
-                ChromiumProfile profile = new(Path.Join(UserDataDir, profileInfo.Name));
+                ChromiumProfile profile = new(Path.Join(userDataDir, profileInfo.Name));
                 Profiles[profileInfo.Name.ToLower()] = profile;
 
                 foreach (string nameProp in nameProperties)
