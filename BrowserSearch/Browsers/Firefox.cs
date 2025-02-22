@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
 using System.Windows;
 using Wox.Infrastructure;
 using Wox.Plugin;
@@ -13,15 +12,15 @@ namespace BrowserSearch.Browsers
 {
     internal class Firefox : IBrowser
     {
-        private readonly string _userDataDir;
+        private readonly string[] _profilesDirCandidates;
         private readonly Dictionary<string, FirefoxProfile> _profiles = [];
         private readonly string? _selectedProfileName;
         private readonly List<Result> _history = [];
         private readonly Dictionary<(string, string), long> _frecencyValues = new();
 
-        public Firefox(string userDataDir, string? profileName)
+        public Firefox(string[] profilesDirCandidates, string? profileName)
         {
-            _userDataDir = userDataDir;
+            _profilesDirCandidates = profilesDirCandidates;
             _selectedProfileName = profileName;
         }
 
@@ -55,27 +54,31 @@ namespace BrowserSearch.Browsers
 
         private void CreateProfiles()
         {
-
-            // _userDataDir contains the path to the ...Roaming\Mozilla\Firefox directory
-
-            // Inside the user data directory, there is a directory called Profiles.
             // Inside the Profiles directory, there are directories for each profile.
-            // The directory are named with the following format: <random_string>.<profile_name>
+            // They are named with the following format: <random_string>.<profile_name>
 
-            string profilesDir = Path.Join(_userDataDir, "Profiles");
-            string[] profileDirectories = Directory.GetDirectories(profilesDir);
-
-            foreach (string profileDir in profileDirectories)
+            foreach (string profilesDir in _profilesDirCandidates)
             {
-                string profileName = Path.GetFileName(profileDir);
-                int dotIndex = profileName.IndexOf('.');
-                if (dotIndex != -1)
+                if (!Directory.Exists(profilesDir))
+                    continue;
+
+                Log.Info($"Found profiles dir: {profilesDir}", typeof(Firefox));
+                foreach (string profileDir in Directory.GetDirectories(profilesDir))
                 {
-                    profileName = profileName.Substring(dotIndex + 1);
+                    string profileName = Path.GetFileName(profileDir);
+                    int dotIndex = profileName.IndexOf('.');
+                    if (dotIndex != -1)
+                    {
+                        profileName = profileName[(dotIndex + 1)..];
+                    }
+                    Log.Info($"Found profile: '{profileName}'", typeof(Firefox));
+                    _profiles[profileName.ToLower()] = new FirefoxProfile(profileDir);
                 }
-                Log.Info($"Found profile: '{profileName}'", typeof(Firefox));
-                _profiles[profileName.ToLower()] = new FirefoxProfile(profileDir);
+
+                return;
             }
+
+            Log.Error("Failed to find profiles directory", typeof(Firefox));
         }
 
         List<Result> IBrowser.GetHistory()

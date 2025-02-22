@@ -131,8 +131,10 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                         Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Nightly\User Data"), _selectedProfileName);
                     break;
                 case "Firefox":
-                    _defaultBrowser = new Firefox(
-                        Path.Join(roamingappdata, @"Mozilla\Firefox"), _selectedProfileName);
+                    _defaultBrowser = new Firefox([
+                            Path.Join(roamingappdata, @"Mozilla\Firefox\Profiles"), // Mozilla Firefox
+                            Path.Join(roamingappdata, @"zen\Profiles"),     // Zen Browser
+                        ], _selectedProfileName);
                     break;
                 case "Google Chrome":
                     _defaultBrowser = new Chromium(
@@ -183,8 +185,9 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                         Path.Join(localappdata, @"Vivaldi\User Data"), _selectedProfileName);
                     break;
                 case "Waterfox":
-                    _defaultBrowser = new Firefox(
-                        Path.Join(roamingappdata, @"Waterfox"), _selectedProfileName);
+                    _defaultBrowser = new Firefox([
+                            Path.Join(roamingappdata, @"Waterfox\Profiles")
+                        ], _selectedProfileName);
                     break;
                 case "Wavebox":
                     _defaultBrowser = new Chromium(
