@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>Community.PowerToys.Run.Plugin.$(MSBuildProjectName)</AssemblyName>
     <Platforms>AnyCPU;x64;ARM64</Platforms>
-    <Version>1.8.0</Version>
+    <Version>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)plugin.json').Split(',')[5].Split(':')[1].Trim().Trim('"'))</Version>
   </PropertyGroup>
 
   <!-- These libraries can be copied from any installation of PowerToys -->

@@ -12,13 +12,18 @@ It reads your default browser's history, allowing you to search its entries and 
 * Firefox
 * Google Chrome
 * Microsoft Edge (Chromium version)
+* Naver Whale
+* Opera
 * Opera GX (profile selection not supported)
 * Thorium
 * Vivaldi Browser
 * Waterfox
 * Wavebox
+* Zen Browser
 
 Support for any other browser based on Chromium or Firefox can be added easily. If yours is not listed here, open an issue.
+
+**NOTE**: Some browsers share the same ID. For example, if you have both Opera and Opera Developer installed, only the history of Opera will be loaded no matter which one of them is set as the default browser since we can't differentiate them by their ID.
 
 ## Install instructions
 * Exit PowerToys
@@ -36,5 +41,5 @@ Support for any other browser based on Chromium or Firefox can be added easily. 
     * Microsoft.Data.Sqlite.dll
     * PowerToys.Settings.UI.Lib.dll
 * Open the project in Visual Studio and build it in release mode
-* Copy the output folder `net8.0-windows` to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins\`
+* Copy the output folder `net9.0-windows` to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins\`
 * (Optional) Rename the copied folder to BrowserSearch
