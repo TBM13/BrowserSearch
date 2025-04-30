@@ -156,6 +156,9 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                     _defaultBrowser = new Chromium(
                         [Path.Join(localappdata, @"Google\Chrome SxS\User Data")], _selectedProfileName);
                     break;
+                case "LibreWolf":
+                    _defaultBrowser = new Firefox([Path.Join(roamingappdata, @"librewolf\Profiles")], _selectedProfileName);
+                    break;
                 case "Microsoft Edge":
                     _defaultBrowser = new Chromium(
                         [Path.Join(localappdata, @"Microsoft\Edge\User Data")], _selectedProfileName);
