@@ -9,13 +9,16 @@ It reads your default browser's history, allowing you to search its entries and 
 ## Supported browsers
 * Arc
 * Brave
+* Chromium
 * Firefox
 * Google Chrome
+* LibreWolf
 * Microsoft Edge (Chromium version)
 * Naver Whale
 * Opera
 * Opera GX (profile selection not supported)
 * Thorium
+* Ungoogled Chromium
 * Vivaldi Browser
 * Waterfox
 * Wavebox
