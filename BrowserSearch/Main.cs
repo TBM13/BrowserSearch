@@ -234,23 +234,31 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
             {
                 // Returning the whole history here makes the search lag, so return only some entries
                 int amount = _maxResults == -1 ? 15 : _maxResults;
-                return history.TakeLast(amount).ToList();
-            }
-
-            List<Result> results = new(history.Count);
-            for (int i = 0; i < history.Count; i++)
-            {
-                Result r = history[i];
-
-                int score = CalculateScore(query.Search, r.Title, r.SubTitle);
-                if (score <= 0)
+                var lastEntrys = history.TakeLast(amount).ToList();
+                return lastEntrys.ConvertAll(e => new Result
                 {
-                    continue;
-                }
-
-                r.Score = score;
-                results.Add(r);
+                    Title = e.Title,
+                    SubTitle = e.SubTitle,
+                    IcoPath = e.IcoPath,
+                    Action = e.Action,
+                    QueryTextDisplay = e.QueryTextDisplay,
+                });
             }
+
+            List<Result> results = history.ConvertAll(h =>
+            {
+                int score = CalculateScore(query.Search, h.Title, h.SubTitle);
+                return new Result
+                {
+                    Title = h.Title,
+                    SubTitle = h.SubTitle,
+                    IcoPath = h.IcoPath,
+                    Action = h.Action,
+                    QueryTextDisplay = h.QueryTextDisplay,
+                    Score = score
+                };
+            });
+            _ = results.RemoveAll(r => r.Score <= 0);
 
             if (_maxResults != -1)
             {
