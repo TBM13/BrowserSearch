@@ -9,6 +9,7 @@ It reads your default browser's history, allowing you to search its entries and 
 ## Supported browsers
 * Arc
 * Brave
+* Cent Browser
 * Chromium
 * Firefox
 * Google Chrome
@@ -43,6 +44,8 @@ Support for any other browser based on Chromium or Firefox can be added easily. 
     * Wox.Infrastructure.dll
     * Microsoft.Data.Sqlite.dll
     * PowerToys.Settings.UI.Lib.dll
-* Open the project in Visual Studio and build it in release mode
-* Copy the output folder `net9.0-windows` to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins\`
-* (Optional) Rename the copied folder to BrowserSearch
+* Now you have two options:
+  * To make a debug build, open the project in Visual Studio, build it and copy the output folder `BrowserSearch\bin\Debug` to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins\`.
+  * To make a release build, use the `publish.ps1` script.
+    * This will output all the necessary files to the `PublishOutput` folder.
+    * The plugin will automatically be copied to `%LOCALAPPDATA%\Microsoft\PowerToys\PowerToys Run\Plugins\BrowserSearch\`
