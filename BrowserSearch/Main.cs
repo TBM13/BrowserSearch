@@ -130,6 +130,10 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                     _defaultBrowser = new Chromium(
                         [Path.Join(localappdata, @"BraveSoftware\Brave-Browser-Nightly\User Data")], _selectedProfileName);
                     break;
+                case "Cent Browser":
+                    _defaultBrowser = new Chromium(
+                        [Path.Join(localappdata, @"CentBrowser\User Data")], _selectedProfileName);
+                    break;
                 case "Chromium":
                     _defaultBrowser = new Chromium(
                         [Path.Join(localappdata, @"Chromium\User Data")], _selectedProfileName);
