@@ -1,3 +1,4 @@
+using BrowserSearch;
 using BrowserSearch.Browsers;
 using Microsoft.PowerToys.Settings.UI.Library;
 using System;
@@ -228,35 +229,36 @@ namespace Community.Powertoys.Run.Plugin.BrowserSearch
                 return [];
             }
 
-            List<Result> history = _defaultBrowser.GetHistory();
+            List<HistoryResult> history = _defaultBrowser.GetHistory();
             // Happens when the user only types our ActionKeyword ("b?" by default)
             if (string.IsNullOrEmpty(query.Search))
             {
                 // Returning the whole history here makes the search lag, so return only some entries
                 int amount = _maxResults == -1 ? 15 : _maxResults;
-                return history.TakeLast(amount).ToList();
+                return [.. history.TakeLast(amount).Select(r => r.ToResult())];
             }
 
             List<Result> results = new(history.Count);
             for (int i = 0; i < history.Count; i++)
             {
-                Result r = history[i];
+                HistoryResult r = history[i];
 
-                int score = CalculateScore(query.Search, r.Title, r.SubTitle);
+                int score = CalculateScore(query.Search, r.Title, r.URL);
                 if (score <= 0)
                 {
                     continue;
                 }
 
-                r.Score = score;
-                results.Add(r);
+                Result converted = r.ToResult();
+                converted.Score = score;
+                results.Add(converted);
             }
 
             if (_maxResults != -1)
             {
                 // Rendering the UI of every search entry is slow, so only show top results
                 results.Sort((x, y) => y.Score.CompareTo(x.Score));
-                results = results.Take(_maxResults).ToList();
+                results = [.. results.Take(_maxResults)];
             }
 
             return results;

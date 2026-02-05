@@ -5,7 +5,6 @@ using System.IO;
 using System.Text.Json;
 using System.Windows;
 using Wox.Infrastructure;
-using Wox.Plugin;
 using Wox.Plugin.Logger;
 using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
 
@@ -16,7 +15,7 @@ namespace BrowserSearch.Browsers
         protected string[] UserDataDirCandidates { get; }
         protected Dictionary<string, ChromiumProfile> Profiles { get; } = [];
         private readonly string? _selectedProfileName;
-        private readonly List<Result> _history = [];
+        private readonly List<HistoryResult> _history = [];
         // Key is query, Value is a list of predictions for that query
         private readonly Dictionary<string, List<ChromiumPrediction>> _predictions = [];
 
@@ -96,7 +95,7 @@ namespace BrowserSearch.Browsers
             }
         }
 
-        List<Result> IBrowser.GetHistory()
+        List<HistoryResult> IBrowser.GetHistory()
         {
             return _history;
         }
@@ -137,7 +136,7 @@ namespace BrowserSearch.Browsers
             _path = path;
         }
 
-        public void Init(List<Result> history, Dictionary<string, List<ChromiumPrediction>> predictions)
+        public void Init(List<HistoryResult> history, Dictionary<string, List<ChromiumPrediction>> predictions)
         {
             if (_initialized)
             {
@@ -215,7 +214,7 @@ namespace BrowserSearch.Browsers
             }
         }
 
-        public void PopulateHistory(List<Result> history)
+        public void PopulateHistory(List<HistoryResult> history)
         {
             ArgumentNullException.ThrowIfNull(_historyDbConnection);
 
@@ -226,11 +225,10 @@ namespace BrowserSearch.Browsers
                 string url = (string)reader[0];
                 string title = (string)reader[1];
 
-                Result result = new()
+                HistoryResult result = new()
                 {
-                    QueryTextDisplay = url,
+                    URL = url,
                     Title = title,
-                    SubTitle = url,
                     IcoPath = BrowserInfo.IconPath,
                     Action = action =>
                     {

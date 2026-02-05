@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using Wox.Infrastructure;
-using Wox.Plugin;
 using Wox.Plugin.Logger;
 using BrowserInfo = Wox.Plugin.Common.DefaultBrowserInfo;
 
@@ -15,7 +14,7 @@ namespace BrowserSearch.Browsers
         private readonly string[] _profilesDirCandidates;
         private readonly Dictionary<string, FirefoxProfile> _profiles = [];
         private readonly string? _selectedProfileName;
-        private readonly List<Result> _history = [];
+        private readonly List<HistoryResult> _history = [];
         private readonly Dictionary<(string, string), long> _frecencyValues = new();
 
         public Firefox(string[] profilesDirCandidates, string? profileName)
@@ -81,7 +80,7 @@ namespace BrowserSearch.Browsers
             Log.Error("Failed to find profiles directory", typeof(Firefox));
         }
 
-        List<Result> IBrowser.GetHistory()
+        List<HistoryResult> IBrowser.GetHistory()
         {
             return _history;
         }
@@ -115,7 +114,7 @@ namespace BrowserSearch.Browsers
             _path = path;
         }
 
-        public void Init(List<Result> history, Dictionary<(string, string), long> frecencyValues)
+        public void Init(List<HistoryResult> history, Dictionary<(string, string), long> frecencyValues)
         {
             if (_initialized)
             {
@@ -164,7 +163,7 @@ namespace BrowserSearch.Browsers
             return cmd.ExecuteReader();
         }
 
-        public void PopulateHistory(List<Result> history, Dictionary<(string, string), long> frecencyValues)
+        public void PopulateHistory(List<HistoryResult> history, Dictionary<(string, string), long> frecencyValues)
         {
             ArgumentNullException.ThrowIfNull(_historyDbConnection);
 
@@ -181,7 +180,6 @@ namespace BrowserSearch.Browsers
                     continue;
                 }
 
-
                 string url = (string)reader[0];
                 string title = (string)reader[1];
                 long frecency = (long)reader[2];
@@ -189,15 +187,12 @@ namespace BrowserSearch.Browsers
                 // Add the frecency value to the frecencyValues dictionary
                 frecencyValues[(url, title)] = frecency;
 
-
-                // Create a new Wox Result object and add it to the history list
-                Result result = new()
+                HistoryResult result = new()
                 {
-                    QueryTextDisplay = url, // The text that will be displayed in the search box
-                    Title = title, // The title of the result
-                    SubTitle = url, // The subtitle of the result
-                    IcoPath = BrowserInfo.IconPath, // The icon that will be displayed next to the result
-                    Action = action => // The action that will be executed when the result is selected
+                    URL = url,
+                    Title = title,
+                    IcoPath = BrowserInfo.IconPath,
+                    Action = action =>
                     {
                         // Open URL in default browser
                         if (!Helper.OpenInShell(url))
