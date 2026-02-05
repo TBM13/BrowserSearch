@@ -399,3 +399,5 @@ FodyWeavers.xsd
 
 # Libs should be added by the user
 *libs/
+
+PublishOutput/
