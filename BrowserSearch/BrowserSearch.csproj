@@ -1,28 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType>Library</OutputType>
     <TargetFramework>net9.0-windows10.0.22621.0</TargetFramework>
-    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
-    <AssemblyName>Community.PowerToys.Run.Plugin.$(MSBuildProjectName)</AssemblyName>
+    <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64;ARM64</Platforms>
+
+    <AssemblyName>Community.PowerToys.Run.Plugin.$(MSBuildProjectName)</AssemblyName>
+    <!-- Read version from plugin.json -->
     <Version>$([System.IO.File]::ReadAllText('$(MSBuildThisFileDirectory)plugin.json').Split(',')[5].Split(':')[1].Trim().Trim('"'))</Version>
+
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
   <!-- These libraries can be copied from any installation of PowerToys -->
-  <!-- They are located at <PowerToys Path>\modules\launcher -->
   <ItemGroup>
     <Reference Include="Wox.Plugin">
       <HintPath>libs\Wox.Plugin.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Wox.Infrastructure">
       <HintPath>libs\Wox.Infrastructure.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="Microsoft.Data.Sqlite">
       <HintPath>libs\Microsoft.Data.Sqlite.dll</HintPath>
+      <Private>false</Private>
     </Reference>
     <Reference Include="PowerToys.Settings.UI.Lib">
       <HintPath>libs\PowerToys.Settings.UI.Lib.dll</HintPath>
+      <Private>false</Private>
     </Reference>
   </ItemGroup>
 
